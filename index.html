@@ -1,39 +1,61 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="ms">
 <head>
-  <meta charset="UTF-8">
-  <title>QR Scanner - Kawalan Kelas</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR Scanner Kawalan Kelas</title>
   <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
   <style>
     body {
       font-family: sans-serif;
-      text-align: center;
+      margin: 0;
       padding: 20px;
+      background: #f2f2f2;
+      text-align: center;
+    }
+    h2 {
+      color: #333;
     }
     #reader {
-      width: 300px;
-      margin: auto;
+      width: 100%;
+      max-width: 420px;
+      margin: 0 auto;
+    }
+    #result {
+      margin-top: 20px;
+      font-weight: bold;
+      color: green;
     }
   </style>
 </head>
 <body>
-  <h2>📷 Imbas QR Code Kawalan Kelas</h2>
+  <h2>📷 Imbas Kod QR Kawalan Kelas</h2>
   <div id="reader"></div>
-  <p id="result" style="margin-top: 20px;"></p>
+  <div id="result"></div>
 
   <script>
-    function onScanSuccess(decodedText, decodedResult) {
-      document.getElementById('result').innerText = 'Berjaya imbas. Pergi ke: ' + decodedText;
-      setTimeout(() => {
-        window.location.href = decodedText;
-      }, 1000);
-      html5QrcodeScanner.clear();
-    }
+    const html5QrCode = new Html5Qrcode("reader");
 
-    const html5QrcodeScanner = new Html5QrcodeScanner(
-      "reader", { fps: 10, qrbox: 250 });
-    html5QrcodeScanner.render(onScanSuccess);
+    html5QrCode.start(
+      { facingMode: { exact: "environment" } }, // Paksa kamera belakang
+      {
+        fps: 10,
+        qrbox: { width: 250, height: 250 }
+      },
+      (decodedText, decodedResult) => {
+        document.getElementById("result").innerText = "✅ Imbasan Berjaya!";
+        html5QrCode.stop().then(() => {
+          window.location.href = decodedText;
+        }).catch((err) => {
+          console.error("Gagal berhenti kamera:", err);
+        });
+      },
+      (errorMessage) => {
+        // boleh abaikan error kecil
+      }
+    ).catch(err => {
+      document.getElementById("result").innerText = "❌ Tidak dapat akses kamera.";
+    });
   </script>
 </body>
 </html>
