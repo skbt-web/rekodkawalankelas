@@ -1,0 +1,65 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Imbas QR - Rekod Masuk Kelas</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 30px;
+    }
+    video {
+      width: 100%;
+      max-width: 400px;
+      margin-top: 20px;
+      border: 2px solid #ccc;
+      border-radius: 12px;
+    }
+    button {
+      padding: 12px 24px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: none;
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <h2>📸 Imbas QR Kehadiran</h2>
+  <p>Pastikan anda login akaun <strong>@moe-dl.edu.my</strong> dalam pelayar ini.</p>
+  <button onclick="startScanner()">Imbas QR Sekarang</button>
+  <video id="preview"></video>
+
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  <script>
+    function startScanner() {
+      const html5QrCode = new Html5Qrcode("preview");
+      Html5Qrcode.getCameras().then(devices => {
+        if (devices && devices.length) {
+          let cameraId = devices[0].id;
+          html5QrCode.start(
+            cameraId,
+            { fps: 10, qrbox: 250 },
+            qrCodeMessage => {
+              html5QrCode.stop();
+              window.location.href = qrCodeMessage;
+            },
+            errorMessage => {
+              // Ignore read errors
+            }
+          ).catch(err => {
+            alert("Gagal buka kamera. Sila benarkan akses kamera.");
+          });
+        }
+      });
+    }
+  </script>
+</body>
+</html>
